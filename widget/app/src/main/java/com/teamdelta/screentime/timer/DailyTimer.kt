@@ -20,7 +20,7 @@ object DailyTimer {
 
     fun updateCurrentValue(value: Int) = DataManager.setTimerCurrentValue(TIMER_ID, value)
 
-    fun isLimitReached(): Boolean = currentValue >= limit
+    fun isLimitReached(): Boolean = currentValue <= limit
 
     fun reset() {
     }

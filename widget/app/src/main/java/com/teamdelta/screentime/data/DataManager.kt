@@ -7,7 +7,7 @@ import android.content.SharedPreferences
 object DataManager {
     private lateinit var prefs: SharedPreferences
     private const val PREF_NAME = "screen_time_prefs"
-    private const val DEFAULT_LIMIT = 60 // 60 minutes default
+    private const val DEFAULT_LIMIT = 0 // 0 seconds default
 
     fun initialize(context: Context) {
         prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
