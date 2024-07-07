@@ -13,13 +13,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
-class TimerManager() {
+object TimerManager {
     val timerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var appContext : Context
 
     fun initialize(context: Context){
-        appContext = appContext.applicationContext
+        appContext = context
         handler.post(timerRunnable)
     }
 
@@ -42,7 +42,7 @@ class TimerManager() {
     }
 
     fun updateTimers() {
-        if (DailyTimer.isRunning && DailyTimer.isLimitReached()) {
+        if (DailyTimer.isRunning) {  //&& DailyTimer.isLimitReached()
             DailyTimer.updateCurrentValue(DailyTimer.currentValue - 1)
         }
         if (SessionTimer.isRunning) {

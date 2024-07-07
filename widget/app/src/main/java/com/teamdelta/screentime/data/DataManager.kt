@@ -10,7 +10,8 @@ object DataManager {
     private const val DEFAULT_LIMIT = 0 // 0 seconds default
 
     fun initialize(context: Context) {
-        prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        //prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
     fun getTimerCurrentValue(timerId: String): Int =
