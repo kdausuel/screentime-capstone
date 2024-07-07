@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.ui.config.ConfigActivity
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +32,7 @@ object TimerManager {
                     widgetManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
                         .forEach {
                             glanceId ->
-                            if (ConfigActivity.getConfig()){
+                            if (DataManager.getConfig()){
                                 updateTimers()
                             }
                         }

@@ -24,7 +24,9 @@ import com.teamdelta.screentime.timer.SessionTimer
 import com.teamdelta.screentime.timer.TimerManager
 import androidx.lifecycle.lifecycleScope
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ConfigActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -38,7 +40,10 @@ class ConfigActivity : ComponentActivity() {
         val intent = intent
         val extras = intent.extras
         if (extras != null) {
-            appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+            appWidgetId = extras.getInt(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            )
         }
 
         // If the activity was started without an app widget ID, finish it.
@@ -46,13 +51,32 @@ class ConfigActivity : ComponentActivity() {
             finish()
             return
         }
+        setResult(RESULT_CANCELED)
 
-        DataManager.initialize(applicationContext)
-        Log.d("ConfigActivity", "DataManager initialized")
-        TimerManager.initialize(applicationContext)
-        Log.d("ConfigActivity", "TimerManager initialized")
 
-        // Config UI
+        lifecycleScope.launch(Dispatchers.Default) {
+            DataManager.initialize(applicationContext)
+            Log.d("ConfigActivity", "DataManager initialized")
+            TimerManager.initialize(applicationContext)
+            Log.d("ConfigActivity", "TimerManager initialized")
+
+            if (DataManager.getConfig()) {
+                // Widget already configured, just update and finish
+                updateWidget()
+                setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
+                finish()
+            } else {
+
+                withContext(Dispatchers.Main) {
+                    showUI()
+                }
+            }
+
+        }
+    }
+
+    // Config UI
+    private fun showUI() {
         setContent {
             var initialNumber by remember { mutableStateOf(10) }
             Column {
@@ -71,7 +95,7 @@ class ConfigActivity : ComponentActivity() {
                             Log.d("ConfigActivity", "Timers set")
                             updateWidget()
                             Log.d("ConfigActivity", "Widget updated")
-                            setConfig(true)
+                            DataManager.setConfig(true)
                             Log.d("ConfigActivity", "Config set")
                             // Set the result to OK and include the widget ID
                             val resultVal = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -90,19 +114,7 @@ class ConfigActivity : ComponentActivity() {
             }
         }
     }
-/*
-    private suspend fun updateWidget() {
-        val context = this
-        Log.d("Config", "Updating")
 
-        val glanceManager = GlanceAppWidgetManager(this@ConfigActivity)
-        val glanceIds = glanceManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
-        glanceIds.forEach { glanceId ->
-            ScreenTimeGlanceWidget().update(this@ConfigActivity, glanceId)
-        }
-    }
-
- */
 private suspend fun updateWidget() {
     try {
         val glanceManager = GlanceAppWidgetManager(this@ConfigActivity)
@@ -116,18 +128,8 @@ private suspend fun updateWidget() {
     }
 }
 
-    companion object{
-        private var IS_CONFIGURED : Boolean = false
-
-        fun setConfig(status :Boolean){
-            IS_CONFIGURED = status
-        }
-
-        fun getConfig() : Boolean{
-            return IS_CONFIGURED
-        }
-    }
 }
+
 fun checkOverlayPermission(context: Context) {
     if (!Settings.canDrawOverlays(context)) {
         val intent = Intent(
@@ -140,3 +142,16 @@ fun checkOverlayPermission(context: Context) {
 }
 
 
+/*
+    companion object{
+        private var IS_CONFIGURED : Boolean = false
+
+        fun setConfig(status :Boolean){
+            DataManager.setConfig(status)
+        }
+
+        fun getConfig() : Boolean{
+            return DataManager.get
+        }
+    }
+ */

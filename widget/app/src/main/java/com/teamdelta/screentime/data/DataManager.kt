@@ -6,13 +6,18 @@ import android.content.SharedPreferences
 
 object DataManager {
     private lateinit var prefs: SharedPreferences
-    private const val PREF_NAME = "screen_time_prefs"
-    private const val DEFAULT_LIMIT = 0 // 0 seconds default
+    private const val PREF_NAME : String = "screen_time_prefs"
+    private const val DEFAULT_LIMIT : Int = 0 // 0 seconds default
 
     fun initialize(context: Context) {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         //prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
+
+    fun setConfig(status:Boolean){
+        prefs.edit().putBoolean("config", status).apply()
+    }
+    fun getConfig() : Boolean{return prefs.getBoolean("config", false)}
 
     fun getTimerCurrentValue(timerId: String): Int =
         prefs.getInt("${timerId}_current", 0)
