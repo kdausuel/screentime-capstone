@@ -5,6 +5,8 @@ import android.content.Context
 import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import com.teamdelta.screentime.data.DataManager
+import com.teamdelta.screentime.timer.TimerManager
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 
 class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
@@ -31,6 +33,13 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Log.d("ScreenTimeWidgetReceiver", "onDisabled called")
+        DataManager.reset()
+        TimerManager.terminateAllTimers()
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        Log.d("ScreenTimeWidgetReceiver", "onDeleted called")
     }
 }
 

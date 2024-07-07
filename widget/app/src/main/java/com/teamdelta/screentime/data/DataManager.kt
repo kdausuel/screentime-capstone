@@ -14,6 +14,8 @@ object DataManager {
         //prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
+    fun reset(){prefs.edit().clear().apply()}
+
     fun setConfig(status:Boolean){
         prefs.edit().putBoolean("config", status).apply()
     }

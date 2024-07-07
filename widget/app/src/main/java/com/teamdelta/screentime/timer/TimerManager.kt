@@ -51,6 +51,10 @@ object TimerManager {
         }
     }
 
+    fun terminateAllTimers(){
+        handler.removeCallbacks(timerRunnable)
+    }
+
     fun pauseTimers(){
         //move to broadcast receiver
         DailyTimer.isRunning = false

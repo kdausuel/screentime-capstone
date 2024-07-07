@@ -9,8 +9,8 @@ import androidx.glance.text.Text
 class ScreenTimeGlanceWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            Text("Hello")
-            //WidgetUI.Content()
+            //Text("Hello")
+            WidgetUI.Content()
         }
     }
 }
