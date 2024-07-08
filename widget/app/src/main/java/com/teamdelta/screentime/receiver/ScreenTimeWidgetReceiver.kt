@@ -13,7 +13,7 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() {
             Log.d("ScreenTimeWidgetReceiver", "glanceAppWidget getter called")
-            return ScreenTimeGlanceWidget()
+            return ScreenTimeGlanceWidget
         }
 
     override fun onEnabled(context: Context) {

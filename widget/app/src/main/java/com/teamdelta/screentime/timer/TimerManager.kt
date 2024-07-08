@@ -3,6 +3,9 @@ package com.teamdelta.screentime.timer
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.glance.GlanceId
+import androidx.glance.appwidget.AppWidgetId
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.ui.config.ConfigActivity
@@ -27,13 +30,15 @@ object TimerManager {
     private val timerRunnable = object : Runnable {
         override fun run(){
             if (::appContext.isInitialized){
+                Log.d("TimerManager", "Runnable started")
                 timerScope.launch {
                     val widgetManager = GlanceAppWidgetManager(appContext)
                     widgetManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
                         .forEach {
                             glanceId ->
                             if (DataManager.getConfig()){
-                                updateTimers()
+                                Log.d("TimerManager", "Updating timers")
+                                updateTimers(glanceId)
                             }
                         }
                 }
@@ -42,13 +47,17 @@ object TimerManager {
         }
     }
 
-    fun updateTimers() {
+    suspend fun updateTimers(id: GlanceId) {
         if (DailyTimer.isRunning) {  //&& DailyTimer.isLimitReached()
+            Log.d("TimerManager", "Updating Daily timer --${DailyTimer.currentValue - 1}")
+
             DailyTimer.updateCurrentValue(DailyTimer.currentValue - 1)
         }
         if (SessionTimer.isRunning) {
             SessionTimer.updateCurrentValue(SessionTimer.currentValue - 1)
         }
+        ScreenTimeGlanceWidget.updateWidget(appContext)
+        Log.d("TimerManager", "Updated widget")
     }
 
     fun terminateAllTimers(){

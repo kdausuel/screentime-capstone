@@ -1,7 +1,7 @@
 package com.teamdelta.screentime.ui.widget
 
+import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
@@ -10,6 +10,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
+import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
@@ -18,14 +19,17 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.teamdelta.screentime.R
 import com.teamdelta.screentime.action.LaunchConfigActionCallback
+import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.dailyTime
+import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.sessionTime
 import java.util.Locale
 
 object WidgetUI {
     @Composable
     fun Content() {
+        val dailyTime = currentState(key = dailyTime) ?: 0
+        val sessionTime = currentState(key = sessionTime) ?: 0
         GlanceTheme {
             Column(
                 modifier = GlanceModifier
@@ -39,7 +43,7 @@ object WidgetUI {
                 ) {
                     TimerDisplay(
                         label = "Daily",
-                        time = "12:34:56", // Replace with actual daily timer value
+                        time = formatTime(dailyTime), // Replace with actual daily timer value
                         modifier = GlanceModifier.defaultWeight()
                     )
                     TimerDisplay(
@@ -70,6 +74,7 @@ object WidgetUI {
         val hours = seconds / 3600
         val minutes = (seconds % 3600) / 60
         val remainingSeconds = seconds % 60
+        Log.d("Format time", "Daily val: $seconds")
 
         return when {
             hours > 0 -> String.format(Locale.US,"%d:%02d", hours, minutes)

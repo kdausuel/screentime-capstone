@@ -23,6 +23,7 @@ import com.teamdelta.screentime.timer.DailyTimer
 import com.teamdelta.screentime.timer.SessionTimer
 import com.teamdelta.screentime.timer.TimerManager
 import androidx.lifecycle.lifecycleScope
+//import com.teamdelta.screentime.timer.TimerManager.appContext
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ class ConfigActivity : ComponentActivity() {
                 Log.d("ConfigActivity", "Widget already configured and not reconfiguring")
                 // Widget already configured, just update and finish
                 // or if launched from the ActionCallback display UI
-                updateWidget()
+                ScreenTimeGlanceWidget.updateWidget(applicationContext)
                 setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
                 finish()
             } else {
@@ -96,16 +97,22 @@ class ConfigActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         lifecycleScope.launch {
-                            DailyTimer.setLimit(initialNumber)
+                            DailyTimer.setLimit(59)
                             SessionTimer.setLimit(initialNumber)
+                            DailyTimer.updateCurrentValue(DailyTimer.limit)
+                            SessionTimer.updateCurrentValue(SessionTimer.limit)
                             Log.d("ConfigActivity", "Timers set")
-                            updateWidget()
+                            ScreenTimeGlanceWidget.updateWidget(applicationContext)
                             Log.d("ConfigActivity", "Widget updated")
                             DataManager.setConfig(true)
                             Log.d("ConfigActivity", "Config set")
                             // Set the result to OK and include the widget ID
                             val resultVal = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             setResult(RESULT_OK, resultVal)
+                            if (!(DailyTimer.isRunning && SessionTimer.isRunning)){
+                                DailyTimer.isRunning = true
+                                SessionTimer.isRunning = true
+                            }
                             finish()
                         }
                     }
@@ -120,20 +127,20 @@ class ConfigActivity : ComponentActivity() {
             }
         }
     }
-
-private suspend fun updateWidget() {
-    try {
-        val glanceManager = GlanceAppWidgetManager(this@ConfigActivity)
-        val glanceIds = glanceManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
-        glanceIds.forEach { glanceId ->
-            ScreenTimeGlanceWidget().update(this@ConfigActivity, glanceId)
+/*
+    private suspend fun updateWidget() {
+        try {
+            val glanceManager = GlanceAppWidgetManager(this@ConfigActivity)
+            val glanceIds = glanceManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
+            glanceIds.forEach { glanceId ->
+                ScreenTimeGlanceWidget.updateWidget(this@ConfigActivity, glanceId)
+            }
+        } catch (e: Exception) {
+            // Log the error
+            e.printStackTrace()
         }
-    } catch (e: Exception) {
-        // Log the error
-        e.printStackTrace()
     }
-}
-
+*/
 }
 
 fun checkOverlayPermission(context: Context) {
