@@ -25,6 +25,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".notify.NotificationActivity"
+            android:theme="@style/Theme.Translucent.NoTitleBar.AppCompat"
+            android:exported="false" />
         <receiver
             android:name=".receiver.ScreenTimeWidgetReceiver"
             android:exported="true">

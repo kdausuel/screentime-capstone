@@ -59,14 +59,12 @@ class ConfigActivity : ComponentActivity() {
         }
         setResult(RESULT_CANCELED)
 
+
         lifecycleScope.launch(Dispatchers.Default) {
-            if (!DataManager.isInitialized()) {
-                DataManager.initialize(applicationContext)
-                Log.d("ConfigActivity", "DataManager initialized")
-                TimerManager.initialize(applicationContext)
-                Log.d("ConfigActivity", "TimerManager initialized")
-            }
-            if (DataManager.getConfig() && !isReconfiguring) {
+            DataManager.initialize(applicationContext)
+            Log.d("ConfigActivity", "DataManager initialized")
+
+            if (DataManager.getConfig() == true && !isReconfiguring) {
                 Log.d("ConfigActivity", "Widget already configured and not reconfiguring")
                 // Widget already configured, just update and finish
                 // or if launched from the ActionCallback display UI
@@ -97,10 +95,13 @@ class ConfigActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         lifecycleScope.launch {
-                            DailyTimer.setLimit(59)
+                            //think about if I want to just have the new values change upon reset
+                            //or immediately
+
+                            DailyTimer.setLimit(1800)
                             SessionTimer.setLimit(initialNumber)
-                            DailyTimer.updateCurrentValue(DailyTimer.limit)
-                            SessionTimer.updateCurrentValue(SessionTimer.limit)
+                            DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
+                            SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
                             Log.d("ConfigActivity", "Timers set")
                             ScreenTimeGlanceWidget.updateWidget(applicationContext)
                             Log.d("ConfigActivity", "Widget updated")
@@ -113,6 +114,8 @@ class ConfigActivity : ComponentActivity() {
                                 DailyTimer.isRunning = true
                                 SessionTimer.isRunning = true
                             }
+                            TimerManager.initialize(applicationContext)
+                            Log.d("ConfigActivity", "TimerManager initialized")
                             finish()
                         }
                     }

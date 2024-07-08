@@ -48,7 +48,7 @@ object WidgetUI {
                     )
                     TimerDisplay(
                         label = "Session",
-                        time = "01:23:45", // Replace with actual session timer value
+                        time = formatTime(sessionTime), // Replace with actual session timer value
                         modifier = GlanceModifier.defaultWeight()
                     )
                 }

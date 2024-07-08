@@ -33,7 +33,7 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Log.d("ScreenTimeWidgetReceiver", "onDisabled called")
-        DataManager.reset()
+        DataManager.reset(context)
         TimerManager.terminateAllTimers()
     }
 
