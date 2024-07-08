@@ -3,6 +3,7 @@ package com.teamdelta.screentime.ui.config
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -23,6 +24,7 @@ import com.teamdelta.screentime.timer.DailyTimer
 import com.teamdelta.screentime.timer.SessionTimer
 import com.teamdelta.screentime.timer.TimerManager
 import androidx.lifecycle.lifecycleScope
+import com.teamdelta.screentime.receiver.ScreenStateManager
 //import com.teamdelta.screentime.timer.TimerManager.appContext
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +61,7 @@ class ConfigActivity : ComponentActivity() {
         }
         setResult(RESULT_CANCELED)
 
+        ScreenStateManager.initialize(applicationContext)
 
         lifecycleScope.launch(Dispatchers.Default) {
             DataManager.initialize(applicationContext)
@@ -98,8 +101,8 @@ class ConfigActivity : ComponentActivity() {
                             //think about if I want to just have the new values change upon reset
                             //or immediately
 
-                            DailyTimer.setLimit(1800)
-                            SessionTimer.setLimit(initialNumber)
+                            DailyTimer.setLimit(59)
+                            SessionTimer.setLimit(120)
                             DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
                             SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
                             Log.d("ConfigActivity", "Timers set")

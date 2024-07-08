@@ -2,6 +2,8 @@ package com.teamdelta.screentime.receiver
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -33,8 +35,10 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Log.d("ScreenTimeWidgetReceiver", "onDisabled called")
+        ScreenStateManager.cleanup(context)
         DataManager.reset(context)
         TimerManager.terminateAllTimers()
+
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {

@@ -97,10 +97,10 @@ object TimerManager {
         handler.removeCallbacks(timerRunnable)
     }
 
-    fun pauseTimers(){
+    fun pauseTimers(status : Boolean){
         //move to broadcast receiver
-        DailyTimer.isRunning = false
-        SessionTimer.isRunning = false
+        DailyTimer.isRunning = !status
+        SessionTimer.isRunning = !status
     }
 
 }
