@@ -36,6 +36,10 @@ class ConfigActivity : ComponentActivity() {
         Log.d("Config", "Started")
         checkOverlayPermission(this)
 
+        // Check if this is a reconfiguration request
+        val isReconfiguring = intent?.flags?.and(Intent.FLAG_ACTIVITY_NEW_TASK) != 0
+        Log.d("ConfigActivity", "isReconfiguring: $isReconfiguring")
+
         // Retrieve the AppWidget ID from the Intent that launched the Activity
         val intent = intent
         val extras = intent.extras
@@ -47,31 +51,33 @@ class ConfigActivity : ComponentActivity() {
         }
 
         // If the activity was started without an app widget ID, finish it.
-        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID && !isReconfiguring) {
+            Log.d("Config", "INVALID ID and not reconfiguring")
             finish()
             return
         }
         setResult(RESULT_CANCELED)
 
-
         lifecycleScope.launch(Dispatchers.Default) {
-            DataManager.initialize(applicationContext)
-            Log.d("ConfigActivity", "DataManager initialized")
-            TimerManager.initialize(applicationContext)
-            Log.d("ConfigActivity", "TimerManager initialized")
-
-            if (DataManager.getConfig()) {
+            if (!DataManager.isInitialized()) {
+                DataManager.initialize(applicationContext)
+                Log.d("ConfigActivity", "DataManager initialized")
+                TimerManager.initialize(applicationContext)
+                Log.d("ConfigActivity", "TimerManager initialized")
+            }
+            if (DataManager.getConfig() && !isReconfiguring) {
+                Log.d("ConfigActivity", "Widget already configured and not reconfiguring")
                 // Widget already configured, just update and finish
+                // or if launched from the ActionCallback display UI
                 updateWidget()
                 setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
                 finish()
             } else {
-
+                Log.d("ConfigActivity", "Showing UI")
                 withContext(Dispatchers.Main) {
                     showUI()
                 }
             }
-
         }
     }
 

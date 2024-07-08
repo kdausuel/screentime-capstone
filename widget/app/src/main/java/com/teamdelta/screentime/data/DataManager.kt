@@ -8,13 +8,22 @@ object DataManager {
     private lateinit var prefs: SharedPreferences
     private const val PREF_NAME : String = "screen_time_prefs"
     private const val DEFAULT_LIMIT : Int = 0 // 0 seconds default
+    private var IS_INITIALIZED : Boolean = false
 
     fun initialize(context: Context) {
         prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        IS_INITIALIZED = true
         //prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
-    fun reset(){prefs.edit().clear().apply()}
+    fun reset(){
+        IS_INITIALIZED = false
+        prefs.edit().clear().apply()
+    }
+
+    fun isInitialized() : Boolean {
+        return IS_INITIALIZED
+    }
 
     fun setConfig(status:Boolean){
         prefs.edit().putBoolean("config", status).apply()

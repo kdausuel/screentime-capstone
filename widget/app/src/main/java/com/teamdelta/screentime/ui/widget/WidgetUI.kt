@@ -59,7 +59,7 @@ object WidgetUI {
                         contentDescription = "Settings",
                         modifier = GlanceModifier
                             .padding(8.dp)
-                            .clickable(actionRunCallback<LaunchConfigActionCallback>())
+                            .clickable(actionRunCallback(LaunchConfigActionCallback::class.java))
                     )
                 }
             }
