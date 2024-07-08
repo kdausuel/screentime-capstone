@@ -25,7 +25,6 @@ object SessionTimer {
     fun isLimitReached(): Boolean = currentValue == 0
 
     fun reset() {
-        DataManager.setTimerCurrentValue(TIMER_ID, 0)
-        DataManager.setTimerRunning(TIMER_ID, false)
+        DataManager.setTimerCurrentValue(TIMER_ID, limit?:-1)
     }
 }

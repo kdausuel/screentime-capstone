@@ -1,10 +1,12 @@
 package com.teamdelta.screentime.ui.config
 
+import android.app.AlarmManager
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -18,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.timer.DailyTimer
@@ -38,6 +42,7 @@ class ConfigActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.d("Config", "Started")
         checkOverlayPermission(this)
+        checkAlarmPermission(this)
 
         // Check if this is a reconfiguration request
         val isReconfiguring = intent?.flags?.and(Intent.FLAG_ACTIVITY_NEW_TASK) != 0
@@ -154,6 +159,15 @@ fun checkOverlayPermission(context: Context) {
         val intent = Intent(
             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
             Uri.parse("package:${context.packageName}")).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        context.startActivity(intent)
+    }
+}
+fun checkAlarmPermission(context: Context) {
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    if (!alarmManager.canScheduleExactAlarms()) {
+        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(intent)

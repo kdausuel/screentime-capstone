@@ -13,14 +13,16 @@ object ScreenStateManager {
 
     fun initialize(context: Context) {
         receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                when (intent?.action) {
+            override fun onReceive(context: Context, intent: Intent) {
+                when (intent.action) {
                     Intent.ACTION_SCREEN_ON -> { // Handle screen on
                         TimerManager.pauseTimers(false)
+                        SessionResetReceiver.cancel(context)
                         Log.d("ScreenState", "Screen On")
                     }
                     Intent.ACTION_SCREEN_OFF -> { // Handle screen off
                         TimerManager.pauseTimers(true)
+                        SessionResetReceiver.schedule(context)
                         Log.d("ScreenState", "Screen Off")
                     }
                 }
