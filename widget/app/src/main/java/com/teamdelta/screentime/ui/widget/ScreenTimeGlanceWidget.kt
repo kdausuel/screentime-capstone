@@ -17,6 +17,11 @@ import androidx.glance.text.Text
 import com.teamdelta.screentime.timer.DailyTimer
 import com.teamdelta.screentime.timer.SessionTimer
 
+/**
+ * GlanceAppWidget for the ScreenTime widget.
+ *
+ * This object defines the structure and behavior of the ScreenTime widget.
+ */
 object ScreenTimeGlanceWidget : GlanceAppWidget() {
     val dailyTime = intPreferencesKey("daily_time")
     val sessionTime = intPreferencesKey("session_time")

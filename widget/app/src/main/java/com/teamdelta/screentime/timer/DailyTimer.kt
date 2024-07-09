@@ -5,7 +5,11 @@ import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.notify.NotificationActivity
 import com.teamdelta.screentime.notify.NotificationLauncher
 
-
+/**
+ * Object representing the daily timer.
+ *
+ * This object manages the state and operations related to the daily timer.
+ */
 object DailyTimer {
     private const val TIMER_ID = "daily"
 

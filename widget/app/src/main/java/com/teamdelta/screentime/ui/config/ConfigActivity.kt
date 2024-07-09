@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,10 +32,17 @@ import androidx.lifecycle.lifecycleScope
 import com.teamdelta.screentime.receiver.ScreenStateManager
 //import com.teamdelta.screentime.timer.TimerManager.appContext
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
+import com.teamdelta.screentime.worker.DailyResetScheduler
+import com.teamdelta.screentime.worker.DailyResetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Activity for configuring the Screen Time widget.
+ *
+ * This activity allows users to set up and modify timer limits and other widget settings.
+ */
 class ConfigActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -91,14 +99,24 @@ class ConfigActivity : ComponentActivity() {
     // Config UI
     private fun showUI() {
         setContent {
-            var initialNumber by remember { mutableStateOf(10) }
+            var dailyValue by remember { mutableIntStateOf(10) }
+            var sessionValue by remember { mutableIntStateOf(10) }
             Column {
                 TextField(
-                    value = initialNumber.toString(),
+                    // Daily Timer
+                    value = dailyValue.toString(),
                     onValueChange = {
-                        initialNumber = it.toIntOrNull() ?: 10
+                        dailyValue = it.toIntOrNull() ?: 10
                     },
-                    label = { Text("Initial Number") }
+                    label = { Text("Daily Timer") }
+                )
+                TextField(
+                    //Session Timer
+                    value = sessionValue.toString(),
+                    onValueChange = {
+                        sessionValue = it.toIntOrNull() ?: 10
+                    },
+                    label = { Text("Session Timer") }
                 )
                 Button(
                     onClick = {
@@ -106,8 +124,8 @@ class ConfigActivity : ComponentActivity() {
                             //think about if I want to just have the new values change upon reset
                             //or immediately
 
-                            DailyTimer.setLimit(59)
-                            SessionTimer.setLimit(120)
+                            DailyTimer.setLimit(dailyValue)
+                            SessionTimer.setLimit(sessionValue)
                             DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
                             SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
                             Log.d("ConfigActivity", "Timers set")
@@ -124,6 +142,8 @@ class ConfigActivity : ComponentActivity() {
                             }
                             TimerManager.initialize(applicationContext)
                             Log.d("ConfigActivity", "TimerManager initialized")
+                            DailyResetScheduler.scheduleDailyResetAtMidnight(applicationContext)
+                            Log.d("ConfigActivity", "Setup midnight reset task")
                             finish()
                         }
                     }

@@ -11,6 +11,11 @@ import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.timer.TimerManager
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 
+/**
+ * GlanceAppWidgetReceiver for the Screen Time widget.
+ *
+ * This receiver handles widget-related events such as updates and configuration changes.
+ */
 class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() {

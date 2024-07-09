@@ -3,13 +3,23 @@ package com.teamdelta.screentime.data
 import android.content.Context
 import android.content.SharedPreferences
 
-
+/**
+ * Singleton object for managing shared preferences data.
+ *
+ * This object provides methods to initialize, reset, and access shared preferences
+ * used throughout the application.
+ */
 object DataManager {
     private  var prefs: SharedPreferences? = null
     private const val PREF_NAME : String = "screen_time_prefs"
     private const val DEFAULT_LIMIT : Int = 0 // 0 seconds default
     private var IS_INITIALIZED : Boolean = false
 
+    /**
+     * Initializes the DataManager with the given context.
+     *
+     * @param context The context used to get shared preferences.
+     */
     @Synchronized
     fun initialize(context: Context) {
         if (prefs == null) {
@@ -19,6 +29,11 @@ object DataManager {
         }
     }
 
+    /**
+     * Resets all shared preferences to their default values.
+     *
+     * @param context The context used to get shared preferences.
+     */
     fun reset(context: Context) {
         initialize(context)
         prefs?.edit()?.clear()?.apply()

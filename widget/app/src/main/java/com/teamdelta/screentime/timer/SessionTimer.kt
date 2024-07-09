@@ -5,6 +5,11 @@ import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.notify.NotificationActivity
 import com.teamdelta.screentime.notify.NotificationLauncher
 
+/**
+ * Object representing the session timer.
+ *
+ * This object manages the state and operations related to the session timer.
+ */
 object SessionTimer {
     private const val TIMER_ID = "session"
 

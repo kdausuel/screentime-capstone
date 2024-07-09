@@ -10,19 +10,19 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
+/**
+ * Activity for displaying notification overlays.
+ *
+ * This activity creates and shows an AlertDialog as an overlay when a timer limit is reached.
+ */
 class NotificationActivity : AppCompatActivity(){
     companion object {
         const val EXTRA_NOTIFY_TYPE = "extra_notify_type"
     }
 
     /**
-     * Called when the activity is starting.
-     *
-     * Creates and displays an AlertDialog as an overlay.
+     * Called when the activity is starting. Creates and displays an AlertDialog as an overlay.
      *
      * @param savedInstanceState If non-null, this activity is being re-initialized after
      * previously being shut down.
@@ -60,6 +60,10 @@ class NotificationActivity : AppCompatActivity(){
 
     }
 }
+
+/**
+ * Object for launching notification overlays.
+ */
 object NotificationLauncher {
     fun launchNotify(context: Context, timerType: String) {
         val intent = Intent(context, NotificationActivity::class.java).apply {
@@ -69,7 +73,4 @@ object NotificationLauncher {
         context.startActivity(intent)
     }
 }
-// XML Modifications:
-// Added NotificationActivity to AndroidManifest.xml:
-//    - Set android:theme="@android:style/Theme.Translucent.NoTitleBar" for transparency
-//    - Set android:exported="false"
+

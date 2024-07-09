@@ -9,7 +9,12 @@ import android.os.Build
 import android.util.Log
 import com.teamdelta.screentime.timer.SessionTimer
 
-
+/**
+ * BroadcastReceiver for handling session reset events.
+ *
+ * This receiver is responsible for resetting the session timer and managing
+ * the associated alarms.
+ */
 class SessionResetReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {

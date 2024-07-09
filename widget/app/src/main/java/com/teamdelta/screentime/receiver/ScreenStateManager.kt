@@ -7,7 +7,11 @@ import android.content.IntentFilter
 import android.util.Log
 import com.teamdelta.screentime.timer.TimerManager
 
-
+/**
+ * Object for managing screen state changes.
+ *
+ * This object handles screen on/off events and updates timers accordingly.
+ */
 object ScreenStateManager {
     private var receiver: BroadcastReceiver? = null
 

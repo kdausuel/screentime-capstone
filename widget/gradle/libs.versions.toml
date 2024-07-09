@@ -1,6 +1,7 @@
 [versions]
 agp = "8.5.0"
 appcompat = "1.7.0"
+core = "1.6.1"
 fragmentKtx = "1.8.1"
 glance = "1.1.0"
 kotlin = "2.0.0"
@@ -8,13 +9,21 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+kotlinxCoroutinesTest = "1.7.3"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
+mockitoCore = "1.10.19"
+mockitoCoreVersion = "3.12.4"
+mockitoInline = "3.12.4"
+robolectric = "4.8"
 workRuntimeKtx = "2.9.0"
+junitKtx = "1.2.1"
+workTesting = "2.9.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-glance = { module = "androidx.glance:glance", version.ref = "glance" }
@@ -34,6 +43,13 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "workTesting" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-core-v3124 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 
 [plugins]

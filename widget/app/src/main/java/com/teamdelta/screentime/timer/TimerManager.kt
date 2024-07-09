@@ -19,7 +19,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
+/**
+ * Object for managing all timers in the application.
+ *
+ * This object handles updating timers, initializing the timer system,
+ * and coordinating between different timer types.
+ */
 object TimerManager {
     val timerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val handler = Handler(Looper.getMainLooper())

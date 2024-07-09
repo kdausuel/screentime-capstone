@@ -25,6 +25,9 @@ import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.dailyTime
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.sessionTime
 import java.util.Locale
 
+/**
+ * Object containing UI components and functions for the ScreenTime widget.
+ */
 object WidgetUI {
     @Composable
     fun Content() {
