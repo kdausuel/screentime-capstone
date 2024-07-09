@@ -78,32 +78,11 @@ object TimerManager {
         }
     }
 
-/*
-    suspend fun updateTimers(id: GlanceId) {
-        if (DailyTimer.isRunning) {  //&& DailyTimer.isLimitReached()
-            Log.d("TimerManager", "Updating Daily timer --${DailyTimer.currentValue - 1}")
-
-            DailyTimer.updateCurrentValue(DailyTimer.currentValue - 1)
-            if (DailyTimer.isLimitReached()){
-                DailyTimer.launchNotify(appContext)
-            }
-        }
-        if (SessionTimer.isRunning) {
-            SessionTimer.updateCurrentValue(SessionTimer.currentValue - 1)
-            if (SessionTimer.isLimitReached()){
-                SessionTimer.launchNotify(appContext)
-            }
-        }
-        ScreenTimeGlanceWidget.updateWidget(appContext)
-        Log.d("TimerManager", "Updated widget")
-    }
-*/
     fun terminateAllTimers(){
         handler.removeCallbacks(timerRunnable)
     }
 
     fun pauseTimers(status : Boolean){
-        //move to broadcast receiver
         DailyTimer.isRunning = !status
         SessionTimer.isRunning = !status
     }

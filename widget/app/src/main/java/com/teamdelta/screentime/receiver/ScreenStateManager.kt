@@ -45,8 +45,3 @@ object ScreenStateManager {
         }
     }
 }
-
-// Usage
-//ScreenStateManager.initialize(context)
-// Later
-//ScreenStateManager.cleanup(context)

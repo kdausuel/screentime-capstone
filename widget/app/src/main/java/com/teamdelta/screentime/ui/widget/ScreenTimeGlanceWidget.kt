@@ -40,8 +40,8 @@ object ScreenTimeGlanceWidget : GlanceAppWidget() {
         val glanceIds = manager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
         glanceIds.forEach { glanceId ->
             updateAppWidgetState(context, glanceId) { prefs ->
-                    prefs[ScreenTimeGlanceWidget.dailyTime] = DailyTimer.currentValue?:0
-                    prefs[ScreenTimeGlanceWidget.sessionTime] = SessionTimer.currentValue?:0
+                    prefs[dailyTime] = DailyTimer.currentValue?:0
+                    prefs[sessionTime] = SessionTimer.currentValue?:0
                 }
             update(context, glanceId)
             }

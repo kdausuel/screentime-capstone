@@ -46,12 +46,12 @@ object WidgetUI {
                 ) {
                     TimerDisplay(
                         label = "Daily",
-                        time = formatTime(dailyTime), // Replace with actual daily timer value
+                        time = formatTime(dailyTime),
                         modifier = GlanceModifier.defaultWeight()
                     )
                     TimerDisplay(
                         label = "Session",
-                        time = formatTime(sessionTime), // Replace with actual session timer value
+                        time = formatTime(sessionTime),
                         modifier = GlanceModifier.defaultWeight()
                     )
                 }

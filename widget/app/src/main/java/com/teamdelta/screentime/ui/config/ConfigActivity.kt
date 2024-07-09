@@ -52,11 +52,11 @@ class ConfigActivity : ComponentActivity() {
         checkOverlayPermission(this)
         checkAlarmPermission(this)
 
-        // Check if this is a reconfiguration request
+        // check if this is a reconfiguration request
         val isReconfiguring = intent?.flags?.and(Intent.FLAG_ACTIVITY_NEW_TASK) != 0
         Log.d("ConfigActivity", "isReconfiguring: $isReconfiguring")
 
-        // Retrieve the AppWidget ID from the Intent that launched the Activity
+        // retrieve AppWidgetID from the intent that launched the activity
         val intent = intent
         val extras = intent.extras
         if (extras != null) {
@@ -66,7 +66,7 @@ class ConfigActivity : ComponentActivity() {
             )
         }
 
-        // If the activity was started without an app widget ID, finish it.
+        // If the activity was started without an app widget ID, finish it
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID && !isReconfiguring) {
             Log.d("Config", "INVALID ID and not reconfiguring")
             finish()
@@ -158,20 +158,7 @@ class ConfigActivity : ComponentActivity() {
             }
         }
     }
-/*
-    private suspend fun updateWidget() {
-        try {
-            val glanceManager = GlanceAppWidgetManager(this@ConfigActivity)
-            val glanceIds = glanceManager.getGlanceIds(ScreenTimeGlanceWidget::class.java)
-            glanceIds.forEach { glanceId ->
-                ScreenTimeGlanceWidget.updateWidget(this@ConfigActivity, glanceId)
-            }
-        } catch (e: Exception) {
-            // Log the error
-            e.printStackTrace()
-        }
-    }
-*/
+
 }
 
 fun checkOverlayPermission(context: Context) {
@@ -194,17 +181,3 @@ fun checkAlarmPermission(context: Context) {
     }
 }
 
-
-/*
-    companion object{
-        private var IS_CONFIGURED : Boolean = false
-
-        fun setConfig(status :Boolean){
-            DataManager.setConfig(status)
-        }
-
-        fun getConfig() : Boolean{
-            return DataManager.get
-        }
-    }
- */
