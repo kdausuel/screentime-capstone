@@ -4,44 +4,29 @@ import android.app.AlarmManager
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.timer.DailyTimer
 import com.teamdelta.screentime.timer.SessionTimer
 import com.teamdelta.screentime.timer.TimerManager
 import androidx.lifecycle.lifecycleScope
 import com.teamdelta.screentime.receiver.ScreenStateManager
-//import com.teamdelta.screentime.timer.TimerManager.appContext
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget
 import com.teamdelta.screentime.worker.DailyResetScheduler
-import com.teamdelta.screentime.worker.DailyResetWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Activity for configuring the Screen Time widget.
+ * Activity for configuring the ScreenTime widget.
  *
  * This activity allows users to set up and modify timer limits and other widget settings.
+ * It handles the initialization of necessary permissions and displays the configuration UI.
  */
 class ConfigActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -81,86 +66,70 @@ class ConfigActivity : ComponentActivity() {
             Log.d("ConfigActivity", "DataManager initialized")
 
             if (DataManager.getConfig() == true && !isReconfiguring) {
-                Log.d("ConfigActivity", "Widget already configured and not reconfiguring")
                 // Widget already configured, just update and finish
-                // or if launched from the ActionCallback display UI
+                Log.d("ConfigActivity", "Widget already configured and not reconfiguring")
                 ScreenTimeGlanceWidget.updateWidget(applicationContext)
                 setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
                 finish()
             } else {
+                // if launched from the ActionCallback display UI
                 Log.d("ConfigActivity", "Showing UI")
                 withContext(Dispatchers.Main) {
-                    showUI()
-                }
-            }
-        }
-    }
-
-    // Config UI
-    private fun showUI() {
-        setContent {
-            var dailyValue by remember { mutableIntStateOf(10) }
-            var sessionValue by remember { mutableIntStateOf(10) }
-            Column {
-                TextField(
-                    // Daily Timer
-                    value = dailyValue.toString(),
-                    onValueChange = {
-                        dailyValue = it.toIntOrNull() ?: 10
-                    },
-                    label = { Text("Daily Timer") }
-                )
-                TextField(
-                    //Session Timer
-                    value = sessionValue.toString(),
-                    onValueChange = {
-                        sessionValue = it.toIntOrNull() ?: 10
-                    },
-                    label = { Text("Session Timer") }
-                )
-                Button(
-                    onClick = {
-                        lifecycleScope.launch {
-                            //think about if I want to just have the new values change upon reset
-                            //or immediately
-
-                            DailyTimer.setLimit(dailyValue)
-                            SessionTimer.setLimit(sessionValue)
-                            DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
-                            SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
-                            Log.d("ConfigActivity", "Timers set")
-                            ScreenTimeGlanceWidget.updateWidget(applicationContext)
-                            Log.d("ConfigActivity", "Widget updated")
-                            DataManager.setConfig(true)
-                            Log.d("ConfigActivity", "Config set")
-                            // Set the result to OK and include the widget ID
-                            val resultVal = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                            setResult(RESULT_OK, resultVal)
-                            if (!(DailyTimer.isRunning && SessionTimer.isRunning)){
-                                DailyTimer.isRunning = true
-                                SessionTimer.isRunning = true
-                            }
-                            TimerManager.initialize(applicationContext)
-                            Log.d("ConfigActivity", "TimerManager initialized")
-                            DailyResetScheduler.scheduleDailyResetAtMidnight(applicationContext)
-                            Log.d("ConfigActivity", "Setup midnight reset task")
-                            finish()
-                        }
+                    setContent {
+                        ConfigUI.Content(
+                            onSave = {dailyValue, sessionValue -> clickSaveButton(dailyValue, sessionValue)},
+                            onCancel = {finish()}
+                        )
                     }
-                ){
-                    Text("Save Changes")
-                }
-                Button(
-                    onClick = {finish()}
-                ){
-                    Text("Cancel")
                 }
             }
         }
     }
 
+    /**
+     * Handles saving the configuration settings.
+     *
+     * @param dailyValue The daily timer limit value.
+     * @param sessionValue The session timer limit value.
+     */
+    private fun clickSaveButton(dailyValue : Int, sessionValue : Int){
+        lifecycleScope.launch {
+            //think about if I want to just have the new values change upon reset
+            //or immediately
+
+            DailyTimer.setLimit(dailyValue)
+            SessionTimer.setLimit(sessionValue)
+            DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
+            SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
+            Log.d("ConfigActivity", "Timers set")
+            ScreenTimeGlanceWidget.updateWidget(applicationContext)
+            Log.d("ConfigActivity", "Widget updated")
+            DataManager.setConfig(true)
+            Log.d("ConfigActivity", "Config set")
+
+            // Set the result to OK and include the widget ID
+            val resultVal = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            setResult(RESULT_OK, resultVal)
+
+            if (!(DailyTimer.isRunning && SessionTimer.isRunning)){
+                DailyTimer.isRunning = true
+                SessionTimer.isRunning = true
+            }
+
+            TimerManager.initialize(applicationContext)
+            Log.d("ConfigActivity", "TimerManager initialized")
+            DailyResetScheduler.scheduleDailyResetAtMidnight(applicationContext)
+            Log.d("ConfigActivity", "Setup midnight reset task")
+            finish()
+        }
+    }
 }
 
+/**
+ * Checks and requests overlay permission if not granted.
+ *
+ * @param context The context of the application.
+ */
 fun checkOverlayPermission(context: Context) {
     if (!Settings.canDrawOverlays(context)) {
         val intent = Intent(
@@ -171,6 +140,12 @@ fun checkOverlayPermission(context: Context) {
         context.startActivity(intent)
     }
 }
+
+/**
+ * Checks and requests alarm permission if not granted.
+ *
+ * @param context The context of the application.
+ */
 fun checkAlarmPermission(context: Context) {
     val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     if (!alarmManager.canScheduleExactAlarms()) {
