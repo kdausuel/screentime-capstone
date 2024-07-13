@@ -1,6 +1,5 @@
 package com.teamdelta.screentime.ui.widget
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,14 +20,19 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import com.teamdelta.screentime.R
 import com.teamdelta.screentime.action.LaunchConfigActionCallback
+import com.teamdelta.screentime.ui.TimeDisplayUtility.formatTime
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.dailyTime
 import com.teamdelta.screentime.ui.widget.ScreenTimeGlanceWidget.sessionTime
-import java.util.Locale
 
 /**
  * Object containing UI components and functions for the ScreenTime widget.
  */
 object WidgetUI {
+
+    /**
+     * Function that displays the main content for the ScreenTime widget.
+     * It includes two timer displays for the daily and session timer and a settings icon.
+     */
     @Composable
     fun Content() {
         val dailyTime = currentState(key = dailyTime) ?: 0
@@ -45,18 +49,20 @@ object WidgetUI {
                         .padding(8.dp)
                 ) {
                     TimerDisplay(
+                        // Daily Timer display
                         label = "Daily",
                         time = formatTime(dailyTime),
                         modifier = GlanceModifier.defaultWeight()
                     )
                     TimerDisplay(
+                        // Session Timer display
                         label = "Session",
                         time = formatTime(sessionTime),
                         modifier = GlanceModifier.defaultWeight()
                     )
                 }
 
-                // Settings gear icon
+                // Settings icon/button functionality
                 Row(
                     modifier = GlanceModifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.End
@@ -73,20 +79,20 @@ object WidgetUI {
         }
     }
 
-    private fun formatTime(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val remainingSeconds = seconds % 60
-        Log.d("Format time", "Daily val: $seconds")
-
-        return when {
-            hours > 0 -> String.format(Locale.US,"%d:%02d", hours, minutes)
-            else -> String.format(Locale.US,"%02d:%02d", minutes, remainingSeconds)
-        }
-    }
-
+    /**
+     * A function that displays a timer with a label and the time.
+     *
+     * @param label The label text to be displayed above the time.
+     * @param time The time text to be displayed below the label.
+     * @param modifier A [GlanceModifier] to be applied to the
+     *  Column container.Defaults to [GlanceModifier].
+     */
     @Composable
-    private fun TimerDisplay(label: String, time: String, modifier: GlanceModifier = GlanceModifier) {
+    private fun TimerDisplay(
+        label: String,
+        time: String,
+        modifier: GlanceModifier = GlanceModifier
+    ) {
         Column(
             modifier = modifier.padding(4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
