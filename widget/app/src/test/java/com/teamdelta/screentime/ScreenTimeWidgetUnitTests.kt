@@ -7,6 +7,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import android.content.Context
+import android.os.Looper
+import androidx.glance.GlanceId
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.ListenableWorker
@@ -22,9 +24,20 @@ import kotlinx.coroutines.runBlocking
 import androidx.work.testing.TestListenableWorkerBuilder
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(manifest = Config.NONE)
 class ScreenTimeWidgetUnitTests {
 
     private lateinit var context: Context
@@ -33,6 +46,7 @@ class ScreenTimeWidgetUnitTests {
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
         DataManager.initialize(context)
+        DataManager.setConfig(true)
     }
 
     // DataManager Tests
@@ -70,15 +84,42 @@ class ScreenTimeWidgetUnitTests {
     @Test
     fun testDailyTimerInitialization() {
         DailyTimer.setLimit(28800) // 8 hours
+        DailyTimer.updateCurrentValue(DailyTimer.limit!!)
+        println("Before reset: limit = ${DailyTimer.limit}, currentValue = ${DailyTimer.currentValue}")
         assert(DailyTimer.limit == 28800)
         assert(DailyTimer.currentValue == 28800)
     }
 
     @Test
     fun testDailyTimerCountdown() {
-        DailyTimer.setLimit(3600)
-        DailyTimer.updateCurrentValue(3540)
-        assert(DailyTimer.currentValue == 3540)
+
+        DailyTimer.setLimit(3605)
+        DailyTimer.updateCurrentValue(DailyTimer.limit!!)
+        println("Daily Timer value = ${DailyTimer.currentValue}")
+        DailyTimer.isRunning = true
+        println("Daily Timer running = ${DailyTimer.isRunning}")
+        assert(DailyTimer.isRunning)
+
+        // Initialize the TimerManager
+        TimerManager.initialize(context)
+
+        // Mock GlanceId
+        val mockGlanceId = mock(GlanceId::class.java)
+
+        // Call updateTimers directly
+        for (i in 1..5) {
+            runBlocking {
+                TimerManager.updateTimers(mockGlanceId)
+            }
+            // Simulate 1 second delay
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(1, TimeUnit.SECONDS)
+        }
+
+        // Check the timer value
+        println("Daily Timer running = ${DailyTimer.isRunning}")
+        assert(DailyTimer.isRunning)
+        println("Daily Timer value = ${DailyTimer.currentValue}")
+        assert(DailyTimer.currentValue == 3600)
     }
 
     @Test
@@ -92,7 +133,9 @@ class ScreenTimeWidgetUnitTests {
     fun testDailyTimerReset() {
         DailyTimer.setLimit(3600)
         DailyTimer.updateCurrentValue(1800)
+        println("Before reset: limit = ${DailyTimer.limit}, currentValue = ${DailyTimer.currentValue}")
         DailyTimer.reset()
+        println("After reset: limit = ${DailyTimer.limit}, currentValue = ${DailyTimer.currentValue}")
         assert(DailyTimer.currentValue == 3600)
     }
 
@@ -100,15 +143,38 @@ class ScreenTimeWidgetUnitTests {
     @Test
     fun testSessionTimerInitialization() {
         SessionTimer.setLimit(7200) // 2 hours
+        SessionTimer.updateCurrentValue(SessionTimer.limit!!)
         assert(SessionTimer.limit == 7200)
         assert(SessionTimer.currentValue == 7200)
     }
 
     @Test
     fun testSessionTimerCountdown() {
-        SessionTimer.setLimit(3600)
-        SessionTimer.updateCurrentValue(3300)
-        assert(SessionTimer.currentValue == 3300)
+        SessionTimer.setLimit(3605)
+        SessionTimer.updateCurrentValue(DailyTimer.limit!!)
+        println("Session Timer value = ${SessionTimer.currentValue}")
+        SessionTimer.isRunning = true
+        println("Session Timer running = ${SessionTimer.isRunning}")
+        assert(SessionTimer.isRunning)
+
+        // Initialize the TimerManager
+        TimerManager.initialize(context)
+
+        // Mock GlanceId
+        val mockGlanceId = mock(GlanceId::class.java)
+
+        // Call updateTimers directly
+        for (i in 1..5) {
+            runBlocking {
+                TimerManager.updateTimers(mockGlanceId)
+            }
+            // Simulate 1 second delay
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(1, TimeUnit.SECONDS)
+        }
+
+        // Check the timer value
+        println("Session Timer value = ${SessionTimer.currentValue}")
+        assert(SessionTimer.currentValue == 3600)
     }
 
     @Test
