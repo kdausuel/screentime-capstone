@@ -82,4 +82,6 @@ dependencies {
     testImplementation(libs.mockito.core.v3124)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.robolectric)
+    testImplementation(libs.powermock.module.junit4)
+    testImplementation(libs.powermock.api.mockito2)
 }

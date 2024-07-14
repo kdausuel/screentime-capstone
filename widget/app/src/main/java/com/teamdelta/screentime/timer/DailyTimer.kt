@@ -30,5 +30,6 @@ object DailyTimer {
     fun isLimitReached(): Boolean = currentValue == 0
 
     fun reset() {
+        DataManager.setTimerCurrentValue(TIMER_ID, limit ?:-1)
     }
 }
