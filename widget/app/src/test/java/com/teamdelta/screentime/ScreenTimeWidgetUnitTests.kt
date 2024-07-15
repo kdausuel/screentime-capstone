@@ -196,7 +196,9 @@ class ScreenTimeWidgetUnitTests {
     fun testSessionTimerReset() {
         SessionTimer.setLimit(3600)
         SessionTimer.updateCurrentValue(1800)
+        println("Before reset: limit = ${SessionTimer.limit}, currentValue = ${SessionTimer.currentValue}")
         SessionTimer.reset()
+        println("Before reset: limit = ${SessionTimer.limit}, currentValue = ${SessionTimer.currentValue}")
         assert(SessionTimer.currentValue == 3600)
     }
 
