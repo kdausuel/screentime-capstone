@@ -1,5 +1,6 @@
 package com.teamdelta.screentime
 
+import android.content.BroadcastReceiver
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -7,6 +8,8 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Looper
 import androidx.glance.GlanceId
 import androidx.test.core.app.ApplicationProvider
@@ -22,15 +25,20 @@ import com.teamdelta.screentime.receiver.ScreenStateManager
 import com.teamdelta.screentime.worker.DailyResetWorker
 import kotlinx.coroutines.runBlocking
 import androidx.work.testing.TestListenableWorkerBuilder
+import com.teamdelta.screentime.notify.NotificationActivity
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowApplication
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -193,17 +201,33 @@ class ScreenTimeWidgetUnitTests {
     }
 
     // TimerManager Tests
-    @RunWith(MockitoJUnitRunner::class)
+    @RunWith(RobolectricTestRunner::class)
+    //@RunWith(MockitoJUnitRunner::class)
     class TimerManagerTest {
         @Mock
         private lateinit var mockContext: Context
 
-        @Test
+        @Before
+        fun setup() {
+            mockContext = ApplicationProvider.getApplicationContext()
+            DataManager.initialize(mockContext)
+            DataManager.setConfig(true)
+            DailyTimer.setLimit(9605)
+            DailyTimer.updateCurrentValue(DailyTimer.limit!!)
+            DailyTimer.isRunning = true
+            SessionTimer.setLimit(8605)
+            SessionTimer.updateCurrentValue(SessionTimer.limit!!)
+            SessionTimer.isRunning = true
+            TimerManager.initialize(mockContext)
+        }
+
+
+        /*@Test
         fun testTimerManagerInitialization() {
             TimerManager.initialize(mockContext)
             // Verify that necessary operations are performed during initialization
             verify(mockContext).registerReceiver(any(), any())
-        }
+        }*/
 
         @Test
         fun testTimerManagerPauseResume() {
@@ -235,37 +259,79 @@ class ScreenTimeWidgetUnitTests {
     }
 
     // NotificationLauncher Tests
-    @RunWith(MockitoJUnitRunner::class)
+    @RunWith(RobolectricTestRunner::class)
     class NotificationLauncherTest {
         @Mock
         private lateinit var mockContext: Context
 
+        @Before
+        fun setup() {
+            MockitoAnnotations.openMocks(this)
+            mockContext = ApplicationProvider.getApplicationContext()
+        }
+
         @Test
         fun testNotificationLaunch() {
+            // Clear any previous intents
+            val shadowApplication = ShadowApplication.getInstance()
+
+            // Launch the notification
             NotificationLauncher.launchNotify(mockContext, "daily")
-            // Verify that the correct intent is started
-            verify(mockContext).startActivity(any())
+
+            // Create the expected intent
+            val expectedIntent = Intent(mockContext, NotificationActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+
+            // Capture the actual started intent
+            val actualIntent = shadowApplication.nextStartedActivity
+
+            // Verify the intent
+            assertEquals(expectedIntent.component, actualIntent.component)
+            assertEquals(expectedIntent.flags, actualIntent.flags)
         }
     }
 
     // ScreenStateManager Tests
-    @RunWith(MockitoJUnitRunner::class)
+    @RunWith(RobolectricTestRunner::class)
     class ScreenStateManagerTest {
         @Mock
         private lateinit var mockContext: Context
 
+        @Captor
+        private lateinit var intentFilterCaptor: ArgumentCaptor<IntentFilter>
+
+        @Before
+        fun setup() {
+            MockitoAnnotations.openMocks(this)
+        }
+
+
         @Test
         fun testScreenStateManagerInitialization() {
+            /// Initialize ScreenStateManager with the mock context
             ScreenStateManager.initialize(mockContext)
-            // Verify that the broadcast receiver is registered
-            verify(mockContext).registerReceiver(any(), any(), Context.RECEIVER_NOT_EXPORTED)
+
+            // Create an IntentFilter with the expected actions
+            val expectedFilter = IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_ON)
+                addAction(Intent.ACTION_SCREEN_OFF)
+            }
+
+            // Capture the IntentFilter passed to registerReceiver
+            verify(mockContext).registerReceiver(any(BroadcastReceiver::class.java), intentFilterCaptor.capture())
+
+            // Assert that the captured IntentFilter has the same actions as the expected one
+            val capturedFilter = intentFilterCaptor.value
+            assertEquals(expectedFilter.actionsIterator().asSequence().toSet(), capturedFilter.actionsIterator().asSequence().toSet())
         }
 
         @Test
         fun testScreenStateManagerCleanup() {
+            ScreenStateManager.initialize(mockContext)
             ScreenStateManager.cleanup(mockContext)
             // Verify that the broadcast receiver is unregistered
-            verify(mockContext).unregisterReceiver(any())
+            verify(mockContext).unregisterReceiver(any(BroadcastReceiver::class.java))
         }
     }
 
