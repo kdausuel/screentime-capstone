@@ -201,6 +201,8 @@ class ScreenTimeWidgetUnitTests {
         println("Before reset: limit = ${SessionTimer.limit}, currentValue = ${SessionTimer.currentValue}")
         assert(SessionTimer.currentValue == 3600)
     }
+}
+
 
     // TimerManager Tests
     @RunWith(RobolectricTestRunner::class)
@@ -239,25 +241,25 @@ class ScreenTimeWidgetUnitTests {
             TimerManager.pauseTimers(false)
             assert(DailyTimer.isRunning && SessionTimer.isRunning)
         }
-    }
 
 
-    // ScreenTimeGlanceWidget Tests
-    @Test
-    fun testWidgetUpdate() = runBlocking {
-        val context = ApplicationProvider.getApplicationContext<Context>()
+        // ScreenTimeGlanceWidget Tests
+        @Test
+        fun testWidgetUpdate() = runBlocking {
+            val context = ApplicationProvider.getApplicationContext<Context>()
 
-        // Set some initial values
-        DailyTimer.updateCurrentValue(3600) // 1 hour
-        SessionTimer.updateCurrentValue(1800) // 30 minutes
+            // Set some initial values
+            DailyTimer.updateCurrentValue(3600) // 1 hour
+            SessionTimer.updateCurrentValue(1800) // 30 minutes
 
-        // Update the widget
-        ScreenTimeGlanceWidget.updateWidget(context)
+            // Update the widget
+            ScreenTimeGlanceWidget.updateWidget(context)
 
-        // Since we can't directly access the widget state, verify
-        // that the DataManager has the correct values
-        assertEquals(3600, DataManager.getTimerCurrentValue("daily"))
-        assertEquals(1800, DataManager.getTimerCurrentValue("session"))
+            // Since we can't directly access the widget state, verify
+            // that the DataManager has the correct values
+            assertEquals(3600, DataManager.getTimerCurrentValue("daily"))
+            assertEquals(1800, DataManager.getTimerCurrentValue("session"))
+        }
     }
 
     // NotificationLauncher Tests
@@ -362,4 +364,3 @@ class ScreenTimeWidgetUnitTests {
             assert(DailyTimer.currentValue == DailyTimer.limit)
         }
     }
-}
