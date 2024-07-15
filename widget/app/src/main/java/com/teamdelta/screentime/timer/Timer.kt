@@ -6,7 +6,7 @@ import com.teamdelta.screentime.data.DataManager
 abstract class Timer(private val timerId : String) {
 
     fun reset() {
-        DataManager.setTimerCurrentValue(timerId, DailyTimer.limit ?:-1)
+        DataManager.setTimerCurrentValue(timerId, limit ?:-1)
     }
 
     val currentValue : Int?
