@@ -3,6 +3,7 @@ package com.teamdelta.screentime.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.teamdelta.screentime.data.DataManager
 
 /**
  * BroadcastReceiver for rescheduling alarms after device reboot.
@@ -14,7 +15,7 @@ class SessionResetBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             // Reschedule the alarm if it was set before reboot
-            if (SessionResetReceiver.wasAlarmSet(context)) {
+            if (DataManager.wasAlarmSet() == true) {
                 SessionResetReceiver.schedule(context)
             }
         }

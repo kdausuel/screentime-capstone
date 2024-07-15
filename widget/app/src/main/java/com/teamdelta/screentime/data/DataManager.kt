@@ -67,4 +67,10 @@ object DataManager {
 
     fun setTimerRunning(timerId: String, isRunning: Boolean) =
         prefs?.edit()?.putBoolean("${timerId}_running", isRunning)?.apply()
+
+    fun setAlarmSetFlag(isSet: Boolean) {
+        prefs?.edit()?.putBoolean("alarmWasSet", isSet)?.apply()
+    }
+
+    fun wasAlarmSet(): Boolean? { return prefs?.getBoolean("alarmWasSet", false) }
 }

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import com.teamdelta.screentime.data.DataManager.setAlarmSetFlag
 import com.teamdelta.screentime.timer.SessionTimer
 
 /**
@@ -20,7 +21,7 @@ class SessionResetReceiver : BroadcastReceiver() {
         when (intent.action) {
             ACTION_RESET_SESSION -> {
                 SessionTimer.reset()
-                setAlarmSetFlag(context, false)
+                setAlarmSetFlag(false)
                 Log.d("SessionReset", "Reset triggered")
             }
         }
@@ -57,7 +58,7 @@ class SessionResetReceiver : BroadcastReceiver() {
                     pendingIntent
                 )
             }
-            setAlarmSetFlag(context, true)
+            setAlarmSetFlag(true)
             Log.d("SessionReset", "Alarm set")
         }
 
@@ -77,18 +78,8 @@ class SessionResetReceiver : BroadcastReceiver() {
                 alarmManager.cancel(it)
                 it.cancel()
             }
-            setAlarmSetFlag(context, false)
+            setAlarmSetFlag(false)
             Log.d("SessionReset", "Alarm canceled")
-        }
-
-        private fun setAlarmSetFlag(context: Context, isSet: Boolean) {
-            val prefs = context.getSharedPreferences("SessionResetPrefs", Context.MODE_PRIVATE)
-            prefs.edit().putBoolean("alarmWasSet", isSet).apply()
-        }
-
-        fun wasAlarmSet(context: Context): Boolean {
-            val prefs = context.getSharedPreferences("SessionResetPrefs", Context.MODE_PRIVATE)
-            return prefs.getBoolean("alarmWasSet", false)
         }
     }
 }
