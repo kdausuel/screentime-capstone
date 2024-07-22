@@ -44,24 +44,34 @@ object ConfigUI {
     @Composable
     fun Content(
         onSave : () -> Unit,
-        onCancel : () -> Unit
+        onCancel : () -> Unit,
+        changedDailyTimer: Boolean,
+        changedSessionTimer : Boolean,
+        onTimerChange : (Boolean, Boolean) -> Unit
     ){
         var isButtonEnabled  by remember { mutableStateOf(false)}
+        val initialDailyLimit = DailyTimer.limit
+        val initialSessionLimit = SessionTimer.limit
+        Log.d("ConfigUI", "initialDaily: $initialDailyLimit")
+        Log.d("ConfigUI", "initialSession: $initialSessionLimit")
+        var changeSession = false
         Column {
             TimerInterface(type = "daily", onLimitChange = {
                 isButtonEnabled =
                     ((DailyTimer.limit ?: 0) > 0 &&
                             (DailyTimer.limit ?: 0) > (SessionTimer.limit ?: 0)) &&
                             (SessionTimer.limit ?: 0) > 0
+                onTimerChange(DailyTimer.limit != initialDailyLimit, changedSessionTimer)
             })
             TimerInterface("session", onLimitChange = {
                 isButtonEnabled = ((DailyTimer.limit ?: 0) > 0
                         && (DailyTimer.limit ?: 0) > (SessionTimer.limit ?: 0))
                         && (SessionTimer.limit ?: 0) > 0
+                onTimerChange(changedDailyTimer, SessionTimer.limit != initialSessionLimit)
             })
             Button(
                 onClick = onSave,
-                enabled = isButtonEnabled
+                enabled = isButtonEnabled && (changedDailyTimer || changedSessionTimer)
             ){
                 Text("Save Changes")
             }
@@ -175,6 +185,7 @@ object ConfigUI {
 /**
  * Composable function for previewing the ConfigUI Content.
  */
+/*
 @Preview(showBackground = true)
 @Composable
 fun ConfigScreenPreview() {
@@ -183,3 +194,4 @@ fun ConfigScreenPreview() {
         onCancel = {}
     )
 }
+*/
