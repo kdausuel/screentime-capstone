@@ -77,7 +77,7 @@ class ConfigActivity : ComponentActivity() {
                 withContext(Dispatchers.Main) {
                     setContent {
                         ConfigUI.Content(
-                            onSave = {dailyValue, sessionValue -> clickSaveButton(dailyValue, sessionValue)},
+                            onSave = {clickSaveButton()},
                             onCancel = {finish()}
                         )
                     }
@@ -89,16 +89,11 @@ class ConfigActivity : ComponentActivity() {
     /**
      * Handles saving the configuration settings.
      *
-     * @param dailyValue The daily timer limit value.
-     * @param sessionValue The session timer limit value.
      */
-    private fun clickSaveButton(dailyValue : Int, sessionValue : Int){
+    private fun clickSaveButton(){
         lifecycleScope.launch {
             //think about if I want to just have the new values change upon reset
             //or immediately
-
-            DailyTimer.setLimit(dailyValue)
-            SessionTimer.setLimit(sessionValue)
             DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
             SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
             Log.d("ConfigActivity", "Timers set")
