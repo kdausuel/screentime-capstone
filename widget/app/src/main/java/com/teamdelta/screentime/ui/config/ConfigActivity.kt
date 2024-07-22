@@ -10,6 +10,10 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.teamdelta.screentime.data.DataManager
 import com.teamdelta.screentime.timer.DailyTimer
 import com.teamdelta.screentime.timer.SessionTimer
@@ -76,9 +80,18 @@ class ConfigActivity : ComponentActivity() {
                 Log.d("ConfigActivity", "Showing UI")
                 withContext(Dispatchers.Main) {
                     setContent {
+                        var changedDailyTimer  by remember { mutableStateOf(false) }
+                        var changedSessionTimer  by remember { mutableStateOf(false)}
+
                         ConfigUI.Content(
-                            onSave = {clickSaveButton()},
-                            onCancel = {finish()}
+                            onSave = {clickSaveButton(changedDailyTimer, changedSessionTimer)},
+                            onCancel = {finish()},
+                            changedDailyTimer = changedDailyTimer,
+                            changedSessionTimer = changedSessionTimer,
+                            onTimerChange = { daily, session ->
+                                changedDailyTimer = daily
+                                changedSessionTimer = session
+                            }
                         )
                     }
                 }
@@ -90,12 +103,16 @@ class ConfigActivity : ComponentActivity() {
      * Handles saving the configuration settings.
      *
      */
-    private fun clickSaveButton(){
+    private fun clickSaveButton(changedDaily : Boolean, changedSession: Boolean){
         lifecycleScope.launch {
             //think about if I want to just have the new values change upon reset
             //or immediately
-            DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
-            SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
+            if (changedDaily) {
+                DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
+            }
+            if (changedSession) {
+                SessionTimer.limit?.let { SessionTimer.updateCurrentValue(it) }
+            }
             Log.d("ConfigActivity", "Timers set")
             ScreenTimeGlanceWidget.updateWidget(applicationContext)
             Log.d("ConfigActivity", "Widget updated")
@@ -150,4 +167,3 @@ fun checkAlarmPermission(context: Context) {
         context.startActivity(intent)
     }
 }
-
