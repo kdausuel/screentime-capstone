@@ -29,10 +29,14 @@ object TimerManager {
     val timerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var appContext : Context
+    private var isInitialized = false
 
     fun initialize(context: Context){
-        appContext = context
-        handler.post(timerRunnable)
+        if (!isInitialized) {
+            appContext = context
+            handler.post(timerRunnable)
+            isInitialized = true
+        }
     }
 
     private val timerRunnable = object : Runnable {

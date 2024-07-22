@@ -135,10 +135,6 @@ class ConfigActivity : ComponentActivity() {
             finish()
         }
     }
-
-    fun setStatus(status : Boolean) : Boolean{
-        return status
-    }
 }
 
 /**
