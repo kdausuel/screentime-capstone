@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import com.teamdelta.screentime.ui.TimeDisplayUtility.formatTime
  * Object containing UI components and functions for the Configuration activity.
  * Provides the UI for configuring the Screen Time widget.
  */
+
 object ConfigUI {
 
     /**
@@ -44,11 +46,22 @@ object ConfigUI {
         onSave : () -> Unit,
         onCancel : () -> Unit
     ){
+        var isButtonEnabled  by remember { mutableStateOf(false)}
         Column {
-            TimerInterface(type = "daily")
-            TimerInterface("session")
+            TimerInterface(type = "daily", onLimitChange = {
+                isButtonEnabled =
+                    ((DailyTimer.limit ?: 0) > 0 &&
+                            (DailyTimer.limit ?: 0) > (SessionTimer.limit ?: 0)) &&
+                            (SessionTimer.limit ?: 0) > 0
+            })
+            TimerInterface("session", onLimitChange = {
+                isButtonEnabled = ((DailyTimer.limit ?: 0) > 0
+                        && (DailyTimer.limit ?: 0) > (SessionTimer.limit ?: 0))
+                        && (SessionTimer.limit ?: 0) > 0
+            })
             Button(
-                onClick = onSave
+                onClick = onSave,
+                enabled = isButtonEnabled
             ){
                 Text("Save Changes")
             }
@@ -64,10 +77,11 @@ object ConfigUI {
      * Composable function for displaying and managing a timer interface.
      *
      * @param type The type of timer ("daily" or "session").
+     * @param onLimitChange Callback function to determine if the Save button should be clickable
      */
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
-    fun TimerInterface(type : String) {
+    fun TimerInterface(type : String, onLimitChange : () -> Unit) {
 
         val timerName = type.replaceFirstChar(Char::titlecase)
         var timerValue by remember { mutableStateOf(DataManager.getTimerLimit(type) ?: 0) }
@@ -109,7 +123,8 @@ object ConfigUI {
                     )
                 },
                 confirmButton = {
-                    TextButton(onClick = {
+                    TextButton(
+                        onClick = {
                         val timerVal = TimeDisplayUtility.convertToSec(
                             timePickerState.hour, timePickerState.minute
                         )
@@ -123,8 +138,11 @@ object ConfigUI {
                         if (validTimerLimit){
                             DataManager.setTimerLimit(type, timerVal)
                             timerValue = timerVal
-                        } else { showSnackbar = true }
+                        } else {
+                            showSnackbar = true
+                        }
                         showDialog = false
+                            onLimitChange()
 
                     }) {
                         Text("OK")
@@ -152,6 +170,8 @@ object ConfigUI {
     }
 }
 
+
+
 /**
  * Composable function for previewing the ConfigUI Content.
  */
@@ -163,24 +183,3 @@ fun ConfigScreenPreview() {
         onCancel = {}
     )
 }
-
-
-/*
-
-            TextField(
-                // Daily Timer
-                value = dailyValue.toString(),
-                onValueChange = {
-                    dailyValue = it.toIntOrNull() ?: 10
-                },
-                label = { Text("Daily Timer") }
-            )
-            TextField(
-                // Session Timer
-                value = sessionValue.toString(),
-                onValueChange = {
-                    sessionValue = it.toIntOrNull() ?: 10
-                },
-                label = { Text("Session Timer") }
-            )
- */
