@@ -41,14 +41,32 @@ object DataManager {
 
     }
 
+    /**
+     * Checks if the DataManager has been initialized.
+     *
+     * @return True if initialized, false otherwise.
+     */
     fun isInitialized() : Boolean {
         return IS_INITIALIZED
     }
 
+    /**
+     * Sets the configuration status of the application.
+     *
+     * @param status The configuration status to set.
+     */
     fun setConfig(status:Boolean){
         prefs?.edit()?.putBoolean("config", status)?.apply()
     }
-    fun getConfig() : Boolean? {return prefs?.getBoolean("config", false)}
+
+    /**
+     * Retrieves the current configuration status.
+     *
+     * @return The current configuration status, or null if not set.
+     */
+    fun getConfig() : Boolean? {
+        return prefs?.getBoolean("config", false)
+    }
 
     /**
      * Retrieves the current value of a specified timer.
@@ -113,5 +131,10 @@ object DataManager {
         prefs?.edit()?.putBoolean("alarmWasSet", isSet)?.apply()
     }
 
+    /**
+     * Checks if an alarm was previously set.
+     *
+     * @return True if an alarm was set, false otherwise, or null if not set.
+     */
     fun wasAlarmSet(): Boolean? { return prefs?.getBoolean("alarmWasSet", false) }
 }
