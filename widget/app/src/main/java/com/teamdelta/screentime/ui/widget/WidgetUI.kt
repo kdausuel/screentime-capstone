@@ -84,7 +84,7 @@ object WidgetUI {
      *
      * @param label The label text to be displayed above the time.
      * @param time The time text to be displayed below the label.
-     * @param modifier A [GlanceModifier] to be applied to the
+     * @param modifier A GlanceModifier to be applied to the
      *  Column container.Defaults to [GlanceModifier].
      */
     @Composable
