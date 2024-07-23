@@ -7,10 +7,17 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Object for scheduling the reset task for the daily timer.
+ *
+ * This object uses WorkManager to schedule a periodic task that resets the daily timer at midnight.
  */
 object DailyResetScheduler {
     private const val DAILY_RESET_WORK_NAME = "daily_reset_work"
 
+    /**
+     * Schedules a daily reset task to occur at midnight every day.
+     *
+     * @param context The context used for accessing the WorkManager.
+     */
     fun scheduleDailyResetAtMidnight(context: Context) {
         val currentDate = Calendar.getInstance()
         val dueDate = Calendar.getInstance()
