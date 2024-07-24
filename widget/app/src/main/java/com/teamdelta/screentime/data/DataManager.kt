@@ -41,36 +41,100 @@ object DataManager {
 
     }
 
+    /**
+     * Checks if the DataManager has been initialized.
+     *
+     * @return True if initialized, false otherwise.
+     */
     fun isInitialized() : Boolean {
         return IS_INITIALIZED
     }
 
+    /**
+     * Sets the configuration status of the application.
+     *
+     * @param status The configuration status to set.
+     */
     fun setConfig(status:Boolean){
         prefs?.edit()?.putBoolean("config", status)?.apply()
     }
-    fun getConfig() : Boolean? {return prefs?.getBoolean("config", false)}
 
+    /**
+     * Retrieves the current configuration status.
+     *
+     * @return The current configuration status, or null if not set.
+     */
+    fun getConfig() : Boolean? {
+        return prefs?.getBoolean("config", false)
+    }
+
+    /**
+     * Retrieves the current value of a specified timer.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @return The current value of the timer in seconds, or null if not set.
+     */
     fun getTimerCurrentValue(timerId: String): Int? =
         prefs?.getInt("${timerId}_current", 0)
 
+    /**
+     * Sets the current value of a specified timer.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @param value The value to set for the timer in seconds.
+     */
     fun setTimerCurrentValue(timerId: String, value: Int) =
         prefs?.edit()?.putInt("${timerId}_current", value)?.apply()
 
+    /**
+     * Retrieves the limit value of a specified timer.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @return The limit value of the timer in seconds, or null if not set.
+     */
     fun getTimerLimit(timerId: String): Int? =
         prefs?.getInt("${timerId}_limit", DEFAULT_LIMIT)
 
+    /**
+     * Sets the limit value of a specified timer.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @param value The limit value to set for the timer in seconds.
+     */
     fun setTimerLimit(timerId: String, value: Int) =
         prefs?.edit()?.putInt("${timerId}_limit", value)?.apply()
 
+    /**
+     * Checks if a specified timer is currently running.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @return True if the timer is running, false otherwise, or null if not set.
+     */
     fun isTimerRunning(timerId: String): Boolean? =
         prefs?.getBoolean("${timerId}_running", false)
 
+     /**
+     * Sets the running state of a specified timer.
+     *
+     * @param timerId The identifier of the timer ("daily" or "session").
+     * @param isRunning The running state to set for the timer.
+     */
     fun setTimerRunning(timerId: String, isRunning: Boolean) =
         prefs?.edit()?.putBoolean("${timerId}_running", isRunning)?.apply()
 
+     /**
+     * Sets the flag indicating whether an alarm was set.
+     *
+     * @param isSet True if an alarm was set, false otherwise.
+     */
     fun setAlarmSetFlag(isSet: Boolean) {
         prefs?.edit()?.putBoolean("alarmWasSet", isSet)?.apply()
     }
 
+    /**
+     * Checks if an alarm was previously set.
+     *
+     * @return True if an alarm was set, false otherwise, or null if not set.
+     */
     fun wasAlarmSet(): Boolean? { return prefs?.getBoolean("alarmWasSet", false) }
 }

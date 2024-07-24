@@ -23,11 +23,23 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
             return ScreenTimeGlanceWidget
         }
 
+    /**
+     * Called when the first instance of the widget is created.
+     * 
+     * @param context The Context in which the receiver is running.
+     */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         Log.d("ScreenTimeWidgetReceiver", "onEnabled called")
     }
 
+    /**
+     * Called when the AppWidgetManager notifies the receiver to update the widget.
+     * 
+     * @param context The Context in which the receiver is running.
+     * @param appWidgetManager The AppWidgetManager instance.
+     * @param appWidgetIds An array of all widget instance IDs to update.
+     */
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -37,6 +49,13 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
 
+    /**
+     * Called when the last instance of the widget is removed from the home screen.
+     *
+     * This method performs cleanup tasks such as stopping timers and resetting data.
+     *
+     * @param context The Context in which the receiver is running.
+     */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Log.d("ScreenTimeWidgetReceiver", "onDisabled called")
@@ -46,6 +65,12 @@ class ScreenTimeWidgetReceiver : GlanceAppWidgetReceiver() {
 
     }
 
+    /**
+     * Called when a particular instance of the widget is deleted from the home screen.
+     * 
+     * @param context The Context in which the receiver is running.
+     * @param appWidgetIds An array of IDs for the deleted widget instances.
+     */
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
         Log.d("ScreenTimeWidgetReceiver", "onDeleted called")

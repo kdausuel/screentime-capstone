@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity
  * This activity creates and shows an AlertDialog as an overlay when a timer limit is reached.
  */
 class NotificationActivity : AppCompatActivity(){
+
+    // Extra key for specifying the type of notification (daily or session) in the intent.
     companion object {
         const val EXTRA_NOTIFY_TYPE = "extra_notify_type"
     }
@@ -65,6 +67,13 @@ class NotificationActivity : AppCompatActivity(){
  * Object for launching notification overlays.
  */
 object NotificationLauncher {
+
+    /**
+     * Launches a notification overlay for a specific timer type.
+     *
+     * @param context The context from which the notification is being launched.
+     * @param timerType The type of timer ("daily" or "session") that triggered the notification.
+     */
     fun launchNotify(context: Context, timerType: String) {
         val intent = Intent(context, NotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK

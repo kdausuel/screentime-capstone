@@ -4,10 +4,10 @@ import android.util.Log
 import java.util.Locale
 
 /**
- * Utility object for time-related operations and formatting.
+ * Utility object for time-related conversion operations and formatting the time on the UI.
  *
  * This object provides methods to convert between seconds and hours/minutes/seconds,
- * as well as formatting time for display.
+ * as well as formatting time for display purposes.
  */
 object TimeDisplayUtility{
 
@@ -37,8 +37,8 @@ object TimeDisplayUtility{
      * Formats a given number of seconds into a human-readable string.
      *
      * The format varies based on the magnitude of the time:
-     * - For times greater than or equal to an hour: "X hr(s) YY min"
-     * - For times less than an hour: "YY min ZZ sec"
+     * - For times greater than or equal to an hour: "X hr(s) YY min(s)"
+     * - For times less than an hour: "YY min(s) ZZ sec(s)"
      *
      * Negative times are prefixed with a minus sign.
      *

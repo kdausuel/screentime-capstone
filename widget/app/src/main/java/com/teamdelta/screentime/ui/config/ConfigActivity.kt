@@ -35,6 +35,12 @@ import kotlinx.coroutines.withContext
 class ConfigActivity : ComponentActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
+    /**
+     * Called when the activity is starting. Sets up the configuration UI and handles
+     * widget initialization or updates.
+     *
+     * @param savedInstanceState If non-null, this activity is being re-initialized after previously being shut down.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("Config", "Started")
@@ -100,13 +106,13 @@ class ConfigActivity : ComponentActivity() {
     }
 
     /**
-     * Handles saving the configuration settings.
+     * Handles saving the configuration settings and updating the timer limits for the widget.
      *
+     * @param changedDaily Whether the daily timer settings were changed.
+     * @param changedSession Whether the session timer settings were changed.
      */
     private fun clickSaveButton(changedDaily : Boolean, changedSession: Boolean){
         lifecycleScope.launch {
-            //think about if I want to just have the new values change upon reset
-            //or immediately
             if (changedDaily) {
                 DailyTimer.limit?.let { DailyTimer.updateCurrentValue(it) }
             }

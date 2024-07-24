@@ -36,10 +36,13 @@ import com.teamdelta.screentime.ui.TimeDisplayUtility.formatTime
 object ConfigUI {
 
     /**
-     * Function for displaying the UI for setting the timers.
+     * Composable function for displaying the main configuration UI.
      *
      * @param onSave Callback function to handle saving the configuration.
      * @param onCancel Callback function to handle canceling the configuration.
+     * @param changedDailyTimer Boolean indicating if daily timer settings have changed.
+     * @param changedSessionTimer Boolean indicating if session timer settings have changed.
+     * @param onTimerChange Callback function to handle timer setting changes.
      */
     @Composable
     fun Content(
@@ -87,7 +90,7 @@ object ConfigUI {
      * Composable function for displaying and managing a timer interface.
      *
      * @param type The type of timer ("daily" or "session").
-     * @param onLimitChange Callback function to determine if the Save button should be clickable
+     * @param onLimitChange Callback function to determine if the Save button should be clickable.
      */
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
@@ -179,19 +182,3 @@ object ConfigUI {
         }
     }
 }
-
-
-
-/**
- * Composable function for previewing the ConfigUI Content.
- */
-/*
-@Preview(showBackground = true)
-@Composable
-fun ConfigScreenPreview() {
-    ConfigUI.Content(
-        onSave = {},
-        onCancel = {}
-    )
-}
-*/

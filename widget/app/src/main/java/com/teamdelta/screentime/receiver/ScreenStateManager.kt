@@ -10,11 +10,17 @@ import com.teamdelta.screentime.timer.TimerManager
 /**
  * Object for managing screen state changes.
  *
- * This object handles screen on/off events and updates timers accordingly.
+ * This object handles screen on/off events and updates timers accordingly, and manages
+ * the scheduling of session reset alarms based on screen state.
  */
 object ScreenStateManager {
     private var receiver: BroadcastReceiver? = null
 
+    /**
+     * Initializes the ScreenStateManager by registering a BroadcastReceiver for screen state changes.
+     *
+     * @param context The context used to register the BroadcastReceiver.
+     */
     fun initialize(context: Context) {
         receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -38,6 +44,13 @@ object ScreenStateManager {
         })
     }
 
+    /**
+     * Cleans up resources by unregistering the BroadcastReceiver.
+     *
+     * This should be called when the ScreenStateManager is no longer needed to prevent memory leaks.
+     *
+     * @param context The context used to unregister the BroadcastReceiver.
+     */
     fun cleanup(context: Context) {
         receiver?.let {
             context.unregisterReceiver(it)

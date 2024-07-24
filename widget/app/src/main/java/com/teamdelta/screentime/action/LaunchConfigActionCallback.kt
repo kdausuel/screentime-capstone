@@ -10,10 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * Callback for launching the configuration activity.
+ * Callback for launching the configuration activity from the widget.
  *
- * This class is responsible for handling the action to launch the configuration
- * activity when triggered from the widget.
+ * This class implements ActionCallback to handle the action of opening the
+ * configuration screen when triggered from the ScreenTime widget. It uses an Intent
+ * to start the ConfigActivity with the appropriate flags.
  */
 class LaunchConfigActionCallback : ActionCallback {
 

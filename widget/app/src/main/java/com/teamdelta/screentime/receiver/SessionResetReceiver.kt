@@ -17,6 +17,13 @@ import com.teamdelta.screentime.timer.SessionTimer
  * the associated alarms.
  */
 class SessionResetReceiver : BroadcastReceiver() {
+
+    /**
+     * Called when the BroadcastReceiver is receiving an Intent broadcast for session reset.
+     *
+     * @param context The Context in which the receiver is running.
+     * @param intent The Intent being received.
+     */
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             ACTION_RESET_SESSION -> {
@@ -32,6 +39,11 @@ class SessionResetReceiver : BroadcastReceiver() {
         const val ACTION_RESET_SESSION = "com.teamdelta.screentime.RESET_SESSION"
         private const val RESET_LIMIT_MINS = 1
 
+        /**
+         * Schedules a new session reset alarm.
+         *
+         * @param context The context used to access system services and set the alarm.
+         */
         fun schedule(context: Context) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context, SessionResetReceiver::class.java).apply {
@@ -63,6 +75,11 @@ class SessionResetReceiver : BroadcastReceiver() {
         }
 
 
+        /**
+         * Cancels the currently scheduled session reset alarm.
+         *
+         * @param context The context used to access system services and cancel the alarm.
+         */
         fun cancel(context: Context) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val intent = Intent(context, SessionResetReceiver::class.java).apply {

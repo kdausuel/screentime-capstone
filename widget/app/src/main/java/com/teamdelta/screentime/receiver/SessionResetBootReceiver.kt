@@ -12,6 +12,13 @@ import com.teamdelta.screentime.data.DataManager
  * any previously set alarms.
  */
 class SessionResetBootReceiver : BroadcastReceiver() {
+
+    /**
+     * Called when the BroadcastReceiver is receiving an Intent broadcast for device boot completion.
+     *
+     * @param context The Context in which the receiver is running.
+     * @param intent The Intent being received.
+     */
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             // Reschedule the alarm if it was set before reboot

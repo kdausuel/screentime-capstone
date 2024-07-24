@@ -20,6 +20,12 @@ object ScreenTimeGlanceWidget : GlanceAppWidget() {
     val dailyTime = intPreferencesKey("daily_time")
     val sessionTime = intPreferencesKey("session_time")
 
+    /**
+     * Provides the content for the Glance widget.
+     *
+     * @param context The context in which the widget is being displayed.
+     * @param id The unique identifier for this instance of the widget.
+     */
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         Log.d("ScreenTime", "provideGlance called for id: $id")
         provideContent {
@@ -28,6 +34,14 @@ object ScreenTimeGlanceWidget : GlanceAppWidget() {
         }
     }
 
+    /**
+     * Updates the widget state and display.
+     *
+     * This method should be called whenever the widget needs to be refreshed,
+     * such as when timer values change.
+     *
+     * @param context The context used for accessing application resources and services.
+     */
     suspend fun updateWidget(context: Context) {
         Log.d("ScreenTime", "updateWidget called")
         val manager = GlanceAppWidgetManager(context)

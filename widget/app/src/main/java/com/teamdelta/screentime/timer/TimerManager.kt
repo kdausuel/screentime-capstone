@@ -20,10 +20,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Object for managing all timers in the application.
+ * Object for managing all timers in the ScreenTime application.
  *
  * This object handles updating timers, initializing the timer system,
- * and coordinating between different timer types.
+ * and coordinating between different timer types. It uses coroutines for
+ * asynchronous operations and a Handler for periodic updates.
+ *
+ * Key features:
+ * - Initialization of the timer system
+ * - Periodic timer updates using a Handler
+ * - Management of daily and session timers
+ * - Widget updates
+ * - Notification triggering when limits are reached
  */
 object TimerManager {
     val timerScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -31,6 +39,14 @@ object TimerManager {
     private lateinit var appContext : Context
     private var isInitialized = false
 
+    /**
+     * Initializes the TimerManager with the given context.
+     *
+     * This method should be called once when the application starts.
+     * It sets up the periodic timer update mechanism.
+     *
+     * @param context The context used for accessing application resources and services.
+     */
     fun initialize(context: Context){
         if (!isInitialized) {
             appContext = context
@@ -39,6 +55,11 @@ object TimerManager {
         }
     }
 
+    /**
+     * Runnable that performs periodic timer updates.
+     * It updates both daily and session timers, checks for limits,
+     * triggers notifications if needed, and updates the widget.
+     */
     private val timerRunnable = object : Runnable {
         override fun run(){
             if (::appContext.isInitialized){
@@ -58,6 +79,15 @@ object TimerManager {
             }
         }
     }
+
+    /**
+     * Updates the timers and the widget display.
+     *
+     * This method is called periodically to decrement timer values,
+     * check for limit reached conditions, and update the widget UI.
+     *
+     * @param id The GlanceId of the widget to update.
+     */
     suspend fun updateTimers(id: GlanceId) {
         withContext(Dispatchers.Default) {
             if (DailyTimer.isRunning) {
@@ -82,10 +112,20 @@ object TimerManager {
         }
     }
 
+    /**
+     * Stops all running timers and cancels any pending updates.
+     *
+     * This method should be called when the widget is being removed or the app is shutting down.
+     */
     fun terminateAllTimers(){
         handler.removeCallbacks(timerRunnable)
     }
 
+    /**
+     * Pauses or resumes all timers based on the given status.
+     *
+     * @param status True to pause timers, false to resume.
+     */
     fun pauseTimers(status : Boolean){
         DailyTimer.isRunning = !status
         SessionTimer.isRunning = !status
